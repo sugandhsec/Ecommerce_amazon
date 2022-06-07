@@ -114,21 +114,21 @@ def profile_buyer(request):
                 session_user.password = request.POST['password']
                 session_user.pic=request.FILES['pic']
                 session_user.save()
-                return render(request, 'profile_buyer.html',{'session_user':session_user,'msg':'UPDATED SUCCESSFULLY !!!!'})
+                return render(request, 'profile_buyer.html',{'session_user':session_user,'msg':'UPDATED SUCCESSFULLY !'})
         else:
             if request.POST['cpassword']:
                 if request.POST['password']==request.POST['cpassword']:
                     session_user.fullname = request.POST['fname']
                     session_user.password = request.POST['password']
                     session_user.save()
-                    return render(request, 'profile_buyer.html',{'session_user':session_user,'msg':'UPDATED SUCCESSFULLY !!!!'})
+                    return render(request, 'profile_buyer.html',{'session_user':session_user,'msg':'UPDATED SUCCESSFULLY !!'})
                 else:
                     return render(request, 'profile_buyer.html',{'session_user':session_user,'msg':'Passwords not match'})
             else:
                 session_user.fullname = request.POST['fname']
                 session_user.password = request.POST['password']
                 session_user.save()
-                return render(request, 'profile_buyer.html',{'session_user':session_user,'msg':'UPDATED SUCCESSFULLY !!!!'})
+                return render(request, 'profile_buyer.html',{'session_user':session_user,'msg':'UPDATED SUCCESSFULLY !!!'})
     return render(request, 'profile_buyer.html',{'session_user':session_user})
 
 def fpassword_buyer(request):

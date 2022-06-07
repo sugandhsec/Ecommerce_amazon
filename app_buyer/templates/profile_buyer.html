@@ -206,8 +206,15 @@
                             <h3>Profile</h3>
                         </div>
                         <p>{{msg}}</p>
-                        <form class="needs-validation"  action="{% url 'profile_buyer' %}" method="post">
+                        <form class="needs-validation"  action="{% url 'profile_buyer' %}" method="post" enctype="multipart/form-data">
                             {% csrf_token %}
+                            <div class="mb-3">
+                                <img src="{{session_user.pic.url}}" class="img-fluid" alt="Image">
+                            </div>
+                            <div class="mb-3">
+                                <label for="myfile">Edit Profile Image:</label>
+                                <input type="file" id="myfile" name="pic" >
+                            </div>
                             <div class="mb-3">
                                 <label for="username">Full Name</label>
                                 <div class="input-group">
