@@ -18,20 +18,11 @@ def register_seller(request):
         except:
             if request.POST['password'] == request.POST['cpassword']:
                 global temp
-                if request.FILES:
-                    temp = {
-                        'fullname': request.POST['fname'],
-                        'email': request.POST['email'],
-                        'password': request.POST['password'],
-                        'pic':request.FILES['pic']
-                    }
-                else:
-                    temp = {
-                        'fullname': request.POST['fname'],
-                        'email': request.POST['email'],
-                        'password': request.POST['password'],
-                    }
-
+                temp = {
+                    'fullname': request.POST['fname'],
+                    'email': request.POST['email'],
+                    'password': request.POST['password'],
+                }
                 global otp
                 otp = randrange(1000,9999)
                 subject = 'Welcome to Ecommerce '
@@ -40,7 +31,7 @@ def register_seller(request):
                 recipient_list = [request.POST['email'], ]
                 send_mail( subject, message, email_from, recipient_list )
 
-                return render(request, 'otp.html')
+                return render(request, 'otp_seller.html')
             else:
                 return render(request, 'register_seller.html',{'msg':'Both passwords is not same'})
     else:
@@ -48,26 +39,15 @@ def register_seller(request):
 
 def otp_seller(request):
     if request.method == 'POST':
-        print(type(otp))
-        print(type(request.POST['otp']))
         if int(request.POST['otp']) == otp:
-            if 'pic' in temp.keys():
-                User_seller.objects.create(
-                    fullname = temp['fullname'],
-                    email = temp['email'],
-                    password = temp['password'],
-                    pic = temp['pic']
-                )
-            else:
-                User_seller.objects.create(
-                    fullname = temp['fullname'],
-                    email = temp['email'],
-                    password = temp['password'],
-                )
-
+            User_seller.objects.create(
+                fullname = temp['fullname'],
+                email = temp['email'],
+                password = temp['password'],
+            )
             return render(request, 'login_seller.html', {'msg': 'Successfully Registered!!'})
         else:
-            return render(request, 'otp_seller.html', {'msg': 'otp wrong!!'})
+            return render(request, 'otp_seller.html', {'msg': 'seller otp wrong!!'})
     else:
         return render(request,'otp_seller.html')
 

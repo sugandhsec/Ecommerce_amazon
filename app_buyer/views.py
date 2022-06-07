@@ -2,7 +2,7 @@ from random import randrange
 
 from django.conf import settings
 from django.core.mail import send_mail
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 from app_buyer.models import User,Cart
 from app_seller.models import Products
@@ -68,6 +68,13 @@ def login(request):
                 if request.POST['password'] ==  uid.password:
                     request.session['email'] = request.POST['email']
                     session_user_data = User.objects.get(email = request.session['email'])
+                    global order_id
+                    cart_obj = Cart.objects.filter(userid = session_user_data)
+                    if len(cart_obj) != 0:
+                         oid = cart_obj.values()
+                         order_id = oid[0]['orderid']
+                    else:
+                         order_id = randrange(1000,9999)
                     return render(request, 'index.html',{'user_data':session_user_data})
                 else:
                     return render(request, 'login.html',{'msg':'Password Incorrect!!'})
@@ -141,36 +148,26 @@ def fpassword_buyer(request):
 
 def add_to_cart(request, pk):
     session_user=User.objects.get(email=request.session['email'])
-    global order_id
-    cart_obj = Cart.objects.filter(userid = session_user)
-    if len(cart_obj) != 0:
-        oid = cart_obj.values()
-        order_id = oid[0]['orderid']
-        pid = Products.objects.get(id=pk)
-        Cart.objects.create(
-            userid=session_user,
-            productid=pid,
-            orderid=order_id,
-        )
-        all_products = Products.objects.all()
-        return render(request, 'arrival.html',{'all_products':all_products})
-    else:
-        order_id = randrange(1000,9999)
-        pid = Products.objects.get(id=pk)
-        Cart.objects.create(
-            userid=session_user,
-            productid=pid,
-            orderid=order_id,
-        )
-        all_products = Products.objects.all()
-        return render(request, 'arrival.html',{'all_products':all_products})
+    pid = Products.objects.get(id=pk)
+    Cart.objects.create(
+        userid=session_user,
+        productid=pid,
+        orderid=order_id,
+    )
+    all_products = Products.objects.all()
+    return render(request, 'arrival.html',{'all_products':all_products})
 
 
 def cart(request):
-    session_user=User.objects.get(email=request.session['email'])
-    cart_data = Cart.objects.filter(userid = session_user, orderid=order_id)
-    print(cart_data)
-    return render(request, 'cart.html',{'cart_data':cart_data})
+    try:
+        session_user=User.objects.get(email=request.session['email'])
+        cart_data = Cart.objects.filter(userid = session_user, orderid=order_id)
+        print(cart_data)
+        return render(request, 'cart.html',{'cart_data':cart_data})
+    except NameError:
+        return redirect('login')
+    except KeyError:
+        return redirect('login')
 
 def remove_cart(request, pk):
     prod=Cart.objects.get(id=pk)
@@ -184,6 +181,7 @@ def checkout(request):
     session_user=User.objects.get(email=request.session['email'])
     cart_data = Cart.objects.filter(userid = session_user)
     cart_data = cart_data.values()
+    print(cart_data)
     single_amount = 0
     for x in cart_data:
         pro_price=Products.objects.get(id=x['productid_id'])
