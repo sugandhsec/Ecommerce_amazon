@@ -120,21 +120,10 @@
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="navbar-menu">
                     <ul class="nav navbar-nav ml-auto" data-in="fadeInDown" data-out="fadeOutUp">
-                        <li class="nav-item"><a class="nav-link" href="{% static 'index.html' %}">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% static 'about.html">About Us</a></li>
-                        <li class="dropdown active">
-                            <a href="{% static '#' %}" class="nav-link dropdown-toggle arrow" data-toggle="dropdown">SHOP</a>
-                            <ul class="dropdown-menu">
-								<li><a href="{% static 'shop.html' %}">Sidebar Shop</a></li>
-								<li><a href="{% static 'shop-detail.html' %}">Shop Detail</a></li>
-                                <li><a href="{% static 'cart.html' %}">Cart</a></li>
-                                <li><a href="{% static 'checkout.html' %}">Checkout</a></li>
-                                <li><a href="{% static 'my-account.html' %}">My Account</a></li>
-                                <li><a href="{% static 'wishlist.html' %}">Wishlist</a></li>
-                            </ul>
-                        </li>
-                        <li class="nav-item"><a class="nav-link" href="{% static 'gallery.html' %}">Gallery</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% static 'contact-us.html' %}">Contact Us</a></li>
+                        <li class="nav-item active"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'arrival' %}">Arrival</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">logout</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'profile_buyer' %}">Profile</a></li>
                     </ul>
                 </div>
                 <!-- /.navbar-collapse -->
@@ -142,11 +131,8 @@
                 <!-- Start Atribute Navigation -->
                 <div class="attr-nav">
                     <ul>
-                        <li class="search"><a href="{% static '#' %}"><i class="fa fa-search"></i></a></li>
-                        <li class="side-menu"><a href="{% static '#' %}">
-						<i class="fa fa-shopping-bag"></i>
-                            <span class="badge">3</span>
-							<p>My Cart</p>
+                        <a href="{% url 'cart' %}">
+                            <p>My Cart</p>
 					</a></li>
                     </ul>
                 </div>

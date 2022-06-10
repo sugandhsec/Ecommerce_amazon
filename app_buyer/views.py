@@ -13,11 +13,14 @@ from app_seller.models import Products
 
 from . import *
 
-
 # Create your views here.
 def index(request):
-    return render(request,'index.html')
-
+    try:
+        session_user_data = User.objects.get(email = request.session['email'])
+        return render(request,'index.html',{'user_data':session_user_data})
+    except:
+        return render(request,'index.html')
+    
 def register(request):
     if request.method == 'POST':
         try:
@@ -88,6 +91,7 @@ def login(request):
            
         
 def logout(request):
+    
     try:
         request.session['email']
         del request.session['email']
@@ -97,8 +101,9 @@ def logout(request):
     
 
 def arrival(request):
+    session_user_data = User.objects.get(email = request.session['email'])
     all_products = Products.objects.all()
-    return render(request, 'arrival.html',{'all_products':all_products})
+    return render(request, 'arrival.html',{'all_products':all_products,'user_data':session_user_data})
 
 def profile_buyer(request):
     session_user = User.objects.get(email = request.session['email'])
@@ -110,44 +115,44 @@ def profile_buyer(request):
                     session_user.password = request.POST['password']
                     session_user.pic=request.FILES['pic']
                     session_user.save()
-                    return render(request, 'profile_buyer.html',{'session_user':session_user,'msg':'UPDATED SUCCESSFULLY !!!!'})
+                    return render(request, 'profile_buyer.html',{'session_user':session_user,'msg':'UPDATED SUCCESSFULLY !!!!','user_data':session_user})
                 else:
-                    return render(request, 'profile_buyer.html',{'session_user':session_user,'msg':'Passwords not match'})
+                    return render(request, 'profile_buyer.html',{'session_user':session_user,'msg':'Passwords not match','user_data':session_user})
             else:
                 session_user.fullname = request.POST['fname']
                 session_user.password = request.POST['password']
                 session_user.pic=request.FILES['pic']
                 session_user.save()
-                return render(request, 'profile_buyer.html',{'session_user':session_user,'msg':'UPDATED SUCCESSFULLY !'})
+                return render(request, 'profile_buyer.html',{'session_user':session_user,'msg':'UPDATED SUCCESSFULLY !','user_data':session_user})
         else:
             if request.POST['cpassword']:
                 if request.POST['password']==request.POST['cpassword']:
                     session_user.fullname = request.POST['fname']
                     session_user.password = request.POST['password']
                     session_user.save()
-                    return render(request, 'profile_buyer.html',{'session_user':session_user,'msg':'UPDATED SUCCESSFULLY !!'})
+                    return render(request, 'profile_buyer.html',{'session_user':session_user,'msg':'UPDATED SUCCESSFULLY !!','user_data':session_user})
                 else:
-                    return render(request, 'profile_buyer.html',{'session_user':session_user,'msg':'Passwords not match'})
+                    return render(request, 'profile_buyer.html',{'session_user':session_user,'msg':'Passwords not match','user_data':session_user})
             else:
                 session_user.fullname = request.POST['fname']
                 session_user.password = request.POST['password']
                 session_user.save()
-                return render(request, 'profile_buyer.html',{'session_user':session_user,'msg':'UPDATED SUCCESSFULLY !!!'})
-    return render(request, 'profile_buyer.html',{'session_user':session_user})
+                return render(request, 'profile_buyer.html',{'session_user':session_user,'msg':'UPDATED SUCCESSFULLY !!!','user_data':session_user})
+    return render(request, 'profile_buyer.html',{'session_user':session_user,'user_data':session_user})
 
 def fpassword_buyer(request):
     if request.method=='POST':
         try:
-         session_user = User.objects.get(email = request.POST['email'])
-         mail = session_user.password
-         subject = 'Welcome to Ecommerce '
-         message = f'Your Password is {mail}'
-         email_from = settings.EMAIL_HOST_USER
-         recipient_list = [request.POST['email'], ]
-         send_mail( subject, message, email_from, recipient_list )
-         return render(request,'login.html',{'msg':'Password Sent to Mail'})
+            session_user = User.objects.get(email = request.POST['email'])
+            mail = session_user.password
+            subject = 'Welcome to Ecommerce '
+            message = f'Your Password is {mail}'
+            email_from = settings.EMAIL_HOST_USER
+            recipient_list = [request.POST['email'], ]
+            send_mail( subject, message, email_from, recipient_list )
+            return render(request,'login.html',{'msg':'Password Sent to Mail'})
         except:
-            return render(request,'fpassword_buyer.html',{'msg':'Email Not Found!!! Please enter correct email'})
+         return render(request,'fpassword_buyer.html',{'msg':'Email Not Found!!! Please enter correct email'})
     return render(request,'fpassword_buyer.html')
 
 def add_to_cart(request, pk):
@@ -159,14 +164,14 @@ def add_to_cart(request, pk):
         orderid=order_id,
     )
     all_products = Products.objects.all()
-    return render(request, 'arrival.html',{'all_products':all_products})
+    return render(request, 'arrival.html',{'all_products':all_products,'user_data':session_user})
 
 
 def cart(request):
     try:
         session_user=User.objects.get(email=request.session['email'])
         cart_data = Cart.objects.filter(userid = session_user, orderid=order_id)        
-        return render(request, 'cart.html',{'cart_data':cart_data})
+        return render(request, 'cart.html',{'cart_data':cart_data,'user_data':session_user})
     except NameError:
         return redirect('login')
     except KeyError:
@@ -178,7 +183,7 @@ def remove_cart(request, pk):
     session_user=User.objects.get(email=request.session['email'])
     cart_data = Cart.objects.filter(userid = session_user, orderid=order_id)
     print(cart_data)
-    return render(request, 'cart.html',{'cart_data':cart_data})
+    return render(request, 'cart.html',{'cart_data':cart_data,'user_data':session_user})
 
 # def checkout(request):
 #     session_user=User.objects.get(email=request.session['email'])
