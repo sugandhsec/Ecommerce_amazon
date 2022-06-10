@@ -8,7 +8,12 @@ from django.core.mail import send_mail
 
 # Create your views here.
 def index_seller(request):
-    return render(request,'index_seller.html')
+     try:
+        request.session['email']
+        session_user_data = User_seller.objects.get(email = request.session['email'])
+        return render(request,'index_seller.html',{'user_data':session_user_data})
+     except:
+        return render(request,'index_seller.html')
 
 def register_seller(request):
     if request.method == 'POST':
@@ -91,15 +96,15 @@ def add_product_seller(request):
                     pic = request.FILES['pic'],
                     seller = session_seller
                 )
-                return render(request, 'add_product_seller.html', {'msg':'Created!!!'})
+                return render(request, 'add_product_seller.html', {'msg':'Created!!!','user_data':session_seller})
             else:
                 Products.objects.create(
                     pname = request.POST['pname'],
                     price = request.POST['price'],
                     seller = session_seller
                 )
-                return render(request, 'add_product_seller.html', {'msg':'Created!!!'})
-        return render(request, 'add_product_seller.html')
+                return render(request, 'add_product_seller.html', {'msg':'Created!!!','user_data':session_seller})
+        return render(request, 'add_product_seller.html',{'user_data':session_seller})
     except:
         return render(request, 'login_seller.html')
     
@@ -114,30 +119,30 @@ def profile_seller(request):
                     session_user.password = request.POST['password']
                     session_user.pic=request.FILES['pic']
                     session_user.save()
-                    return render(request, 'profile_seller.html',{'session_user':session_user,'msg':'UPDATED SUCCESSFULLY !!!!'})
+                    return render(request, 'profile_seller.html',{'session_user':session_user,'msg':'UPDATED SUCCESSFULLY !!!!','user_data':session_user})
                 else:
-                    return render(request, 'profile_seller.html',{'session_user':session_user,'msg':'Passwords not match'})
+                    return render(request, 'profile_seller.html',{'session_user':session_user,'msg':'Passwords not match','user_data':session_user})
             else:
                 session_user.fullname = request.POST['fname']
                 session_user.password = request.POST['password']
                 session_user.pic=request.FILES['pic']
                 session_user.save()
-                return render(request, 'profile_seller.html',{'session_user':session_user,'msg':'UPDATED SUCCESSFULLY !!!!'})
+                return render(request, 'profile_seller.html',{'session_user':session_user,'msg':'UPDATED SUCCESSFULLY !!!!','user_data':session_user})
         else:
             if request.POST['cpassword']:
                 if request.POST['password']==request.POST['cpassword']:
                     session_user.fullname = request.POST['fname']
                     session_user.password = request.POST['password']
                     session_user.save()
-                    return render(request, 'profile_seller.html',{'session_user':session_user,'msg':'UPDATED SUCCESSFULLY !!!!'})
+                    return render(request, 'profile_seller.html',{'session_user':session_user,'msg':'UPDATED SUCCESSFULLY !!!!','user_data':session_user})
                 else:
-                    return render(request, 'profile_seller.html',{'session_user':session_user,'msg':'Passwords not match'})
+                    return render(request, 'profile_seller.html',{'session_user':session_user,'msg':'Passwords not match','user_data':session_user})
             else:
                 session_user.fullname = request.POST['fname']
                 session_user.password = request.POST['password']
                 session_user.save()
-                return render(request, 'profile_seller.html',{'session_user':session_user,'msg':'UPDATED SUCCESSFULLY !!!!'})
-    return render(request, 'profile_seller.html',{'session_user':session_user})
+                return render(request, 'profile_seller.html',{'session_user':session_user,'msg':'UPDATED SUCCESSFULLY !!!!','user_data':session_user})
+    return render(request, 'profile_seller.html',{'session_user':session_user,'user_data':session_user})
 
 def fpassword_seller(request):
     if request.method=='POST':
@@ -149,7 +154,7 @@ def fpassword_seller(request):
          email_from = settings.EMAIL_HOST_USER
          recipient_list = [request.POST['email'], ]
          send_mail( subject, message, email_from, recipient_list )
-         return render(request,'login_seller.html',{'msg':'Password Sent to Mail'})
+         return render(request,'login_seller.html',{'msg':'Password Sent to Mail','user_data':session_user})
         except:
             return render(request,'fpassword_seller.html',{'msg':'Email Not Found!!! Please enter correct email'})
     return render(request,'fpassword_seller.html')
