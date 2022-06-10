@@ -1,3 +1,5 @@
+#/home/sugandhanywhere/Ecommerce_amazon/app_seller
+#/home/sugandhanywhere/Ecommerce_amazon/app_buyer
 
 from random import randrange
 
@@ -251,7 +253,6 @@ def checkout(request):
     context['currency'] = currency
     context['callback_url'] = callback_url
     context['amount']=amount
- 
     return render(request, 'payment.html', context=context)
  
 # we need to csrf_exempt this url as
@@ -285,6 +286,9 @@ def paymenthandler(request):
                 razorpay_client.payment.capture(payment_id, amount)
 
                 # render success page on successful caputre of payment
+                session_user=User.objects.get(email=request.session['email'])
+                cart_data = Cart.objects.filter(userid = session_user)
+                cart_data.delete()
                 return render(request, 'paymentsuccess.html')
             except:
 
