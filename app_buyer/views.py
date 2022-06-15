@@ -234,8 +234,10 @@ def checkout(request):
     single_amount = 0
     for x in cart_data:
         pro_price=Products.objects.get(id=x['productid_id'])
-        single_amount+=pro_price.price
-    amount = single_amount*100  # Rs. 200
+        single_amount+=pro_price.price #Rupiya
+    amount_user_show = single_amount # Rupiya
+    amount = single_amount*100 # Paise
+
 
     razorpay_order = razorpay_client.order.create(dict(amount=amount,
                                                        currency=currency,
@@ -252,7 +254,7 @@ def checkout(request):
     context['razorpay_amount'] = amount
     context['currency'] = currency
     context['callback_url'] = callback_url
-    context['amount']=amount
+    context['amount']= amount_user_show
     return render(request, 'payment.html', context=context)
  
 # we need to csrf_exempt this url as
